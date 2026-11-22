@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#8E7AB5"/>
+<title>Kivo | كيفو</title>
+<style>
+:root{--bg:#FAF6F0;--card:#F3ECE2;--inp:#FFF;--u:#8E7AB5;--b:#EFE7DA;--p:#8E7AB5;--ps:rgba(142,122,181,.14);--t:#2E2639;--m:#7B708A;--bd:#E5DBCC;--err:#D96B6B;--ok:#5EA884}
+body.dark{--bg:#161320;--card:#211C2F;--inp:#2A243B;--u:#7E68AA;--b:#252036;--p:#A692CC;--ps:rgba(166,146,204,.16);--t:#F2ECF9;--m:#A99EC0;--bd:#322B47}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;width:100%;background:var(--bg);color:var(--t)}
+body{display:flex;justify-content:center;align-items:center}
+.frame{width:100%;height:100%;background:var(--bg);color:var(--t);position:relative;overflow:hidden;display:flex;flex-direction:column}
+@media(min-width:480px){body{background:#E8E0D5}body.dark{background:#0D0B14}.frame{max-width:420px;height:92vh;max-height:840px;border-radius:30px;border:5px solid rgba(142,122,181,.25)}}
+.screen{display:none;flex-direction:column;height:100%;width:100%}
+.screen.active{display:flex}
+.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#9F8BC7,#735D9D);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px;flex-shrink:0;position:relative}
+.av.lg{width:68px;height:68px;font-size:28px;margin:0 auto 10px}
+.dot{position:absolute;bottom:1px;right:1px;width:10px;height:10px;background:var(--ok);border:2px solid var(--bg);border-radius:50%}
+.cbox{padding:20px;display:flex;flex-direction:column;height:100%;overflow-y:auto}
+.cin{margin:auto 0;width:100%}
+.title{text-align:center;font-size:28px;font-weight:700;color:var(--p)}
+.sub{text-align:center;font-size:13px;color:var(--m);margin-bottom:14px}
+.lbl{font-size:13px;font-weight:700;margin-bottom:5px;display:block}
+.inp,.sel{width:100%;padding:11px 13px;border-radius:13px;border:1.5px solid var(--bd);background:var(--inp);color:var(--t);font-size:14px;outline:none;margin-bottom:10px}
+.btn{width:100%;padding:12px;border-radius:13px;border:none;font-size:14.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.bp{background:var(--p);color:#fff}
+.bo{background:var(--inp);color:var(--t);border:1.5px solid var(--bd);margin-top:8px}
+.grow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.gbtn{padding:10px;border-radius:13px;border:1.5px solid var(--bd);background:var(--inp);color:var(--t);font-weight:700;cursor:pointer}
+.gbtn.sel{background:var(--ps);border-color:var(--p);color:var(--p)}
+.div{text-align:center;font-size:12px;color:var(--m);margin:8px 0}
+.warn{background:#FFF3CD;color:#664D03;padding:8px;border-radius:10px;font-size:11.5px;text-align:center;margin-top:12px;line-height:1.5}
+.hdr{padding:10px 12px;background:var(--card);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:6px}
+.hinfo{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.htit{font-size:15px;font-weight:700}
+.hslog{font-size:11px;color:var(--p);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ibtn{width:32px;height:32px;border-radius:10px;border:1px solid var(--bd);background:var(--inp);color:var(--t);cursor:pointer;font-size:14px;flex-shrink:0}
+.push{position:absolute;top:10px;left:12px;right:12px;background:var(--card);border:2px solid var(--p);border-radius:14px;padding:10px;z-index:50;display:none;align-items:center;gap:8px;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.push.show{display:flex}
+.cbody{flex:1;padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:9px}
+.msg{max-width:86%;padding:10px 13px;border-radius:16px;font-size:14px;line-height:1.55;word-wrap:break-word;white-space:pre-line}
+.msg.bot{align-self:flex-start;background:var(--b);color:var(--t);border-bottom-right-radius:4px}
+.msg.user{align-self:flex-end;background:var(--u);color:#fff;border-bottom-left-radius:4px}
+.mft{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px;font-size:10px;opacity:.75}
+.spk{background:var(--ps);color:var(--p);border:none;border-radius:8px;padding:2px 7px;font-size:11px;font-weight:700;cursor:pointer}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:5px;margin-bottom:5px}
+.mgrid img,.mgrid video{width:100%;max-height:180px;object-fit:cover;border-radius:9px}
+.fbad{background:rgba(0,0,0,.08);padding:5px 8px;border-radius:8px;font-size:12px;margin-bottom:4px;display:inline-block}
+.chips{display:flex;gap:6px;padding:6px 10px 2px;overflow-x:auto}
+.chip{background:var(--ps);color:var(--p);border:1px solid rgba(142,122,181,.3);padding:5px 10px;border-radius:18px;font-size:11.5px;font-weight:700;white-space:nowrap;cursor:pointer}
+.pstrip{display:none;gap:7px;padding:7px 10px;overflow-x:auto;background:var(--card);border-top:1px solid var(--bd)}
+.pstrip.show{display:flex}
+.pthumb{position:relative;width:52px;height:52px;flex-shrink:0;border-radius:9px;border:1.5px solid var(--p);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:10px;background:var(--inp)}
+.pthumb img,.pthumb video{width:100%;height:100%;object-fit:cover}
+.rmt{position:absolute;top:1px;right:1px;width:17px;height:17px;border-radius:50%;border:none;background:var(--err);color:#fff;font-size:10px;cursor:pointer}
+.btm{background:var(--card);border-top:1px solid var(--bd);padding:8px 10px 10px}
+.irow{display:flex;gap:6px;align-items:center;margin-bottom:7px}
+.cinp{flex:1;padding:10px 12px;border-radius:20px;border:1px solid var(--bd);background:var(--inp);color:var(--t);font-size:13.5px;outline:none;min-width:0}
+.sbtn,.mbtn{width:38px;height:38px;border-radius:50%;border:none;background:var(--p);color:#fff;font-size:15px;cursor:pointer;flex-shrink:0}
+.mbtn{background:var(--inp);color:var(--p);border:1.5px solid var(--p)}
+.mbtn.rec{background:var(--err);color:#fff;border-color:var(--err)}
+.dock{display:grid;grid-template-columns:1fr 1.2fr 1.1fr;gap:6px}
+.dbtn{padding:8px 4px;border-radius:11px;border:1.5px solid var(--bd);background:var(--inp);color:var(--t);font-size:11.5px;font-weight:700;cursor:pointer}
+.dbtn.v{border-color:var(--p);color:var(--p)}
+.call{position:absolute;inset:0;background:linear-gradient(160deg,#251E38,#141020);color:#fff;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:30px 20px;text-align:center}
+.call.active{display:flex}
+.cring{width:106px;height:106px;border-radius:50%;background:linear-gradient(135deg,#A692CC,#735D9D);display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:700;box-shadow:0 0 0 12px rgba(166,146,204,.16);margin:0 auto 12px}
+.cring.talk{box-shadow:0 0 0 22px rgba(166,146,204,.3)}
+.ctrans{background:rgba(255,255,255,.1);border-radius:14px;padding:12px;width:100%;max-height:140px;overflow-y:auto;font-size:13.5px;line-height:1.5}
+.cctrls{display:flex;gap:16px;align-items:center}
+.ccbtn{width:58px;height:58px;border-radius:50%;border:none;font-size:22px;cursor:pointer}
+.mod{position:absolute;inset:0;background:rgba(15,12,22,.6);display:none;align-items:flex-end;justify-content:center;z-index:40}
+.mod.open{display:flex}
+.msheet{width:100%;max-height:88%;background:var(--bg);border-top-left-radius:22px;border-top-right-radius:22px;padding:16px;overflow-y:auto}
+.mhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.pdots{display:flex;justify-content:center;gap:12px;margin:12px 0}
+.pdot{width:14px;height:14px;border-radius:50%;border:2px solid var(--p)}
+.pdot.f{background:var(--p)}
+.kpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:240px;margin:0 auto}
+.kbtn{padding:11px;font-size:16px;font-weight:700;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--t);cursor:pointer}
+.vcard{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:11px;margin-bottom:9px;font-size:13px}
+.err{color:var(--err);font-size:12px;text-align:center;min-height:16px;margin-bottom:6px;font-weight:700}
+.typ{font-size:12px;color:var(--m);padding:0 14px 4px;display:none}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div id="pushBanner" class="push"><div class="av" style="width:32px;height:32px;font-size:14px;">K</div><div style="flex:1;font-size:12px;"><strong style="color:var(--p);display:block;">كيفو بيطمن عليكي 🤍</strong><span id="pushTxt"></span></div><button type="button" class="ibtn" onclick="hidePush()">✕</button></div>
+
+  <div id="screenLogin" class="screen active">
+    <div class="cbox"><div class="cin">
+      <div class="av lg">K</div>
+      <div class="title">Kivo • كيفو</div>
+      <div class="sub">أنا فاكرك وموجود عشانك دايماً...</div>
+      <label class="lbl">الإيميل بتاعك</label>
+      <input id="emailInput" type="email" class="inp" placeholder="example@gmail.com" dir="ltr" style="text-align:right;"/>
+      <div id="loginError" class="err"></div>
+      <button type="button" class="btn bp" onclick="loginWithEmail()">دخول بالإيميل</button>
+      <div class="div">أو</div>
+      <button type="button" class="btn bo" onclick="loginWithGoogle()">🔵 الدخول السريع بجوجل (Google)</button>
+      <div style="margin-top:14px;text-align:center;"><button type="button" class="chip" onclick="toggleDarkMode()">🌙 / ☀️ الوضع المظلم</button></div>
+      <div id="jsCheck" class="warn">⚠️ لو الرسالة الصفرا دي ظاهرة قدامك، افتحيه في متصفح Chrome أو انشريه على drophtml.page.</div>
+    </div></div>
+  </div>
+
+  <div id="screenOnboard" class="screen">
+    <div class="cbox"><div class="cin">
+      <div class="av lg">K</div>
+      <h2 style="text-align:center;font-size:18px;margin-bottom:4px;">أهلاً، أنا كيفو (Kivo) 🤍</h2>
+      <div class="sub">أنا عيلتك كلها.. احكيلي عنك عشان أفتكرك</div>
+      <label class="lbl">تحب أناديك بإيه؟</label>
+      <input id="nameInput" type="text" class="inp" placeholder="مثال: هاجر / يوسف"/>
+      <label class="lbl">أكلمك بصيغة إيه؟</label>
+      <div class="grow">
+        <button type="button" id="btnF" class="gbtn sel" onclick="selGen('female')">بنت (صاحبتي)</button>
+        <button type="button" id="btnM" class="gbtn" onclick="selGen('male')">ولد (صاحبي)</button>
+      </div>
+      <label class="lbl">تحبي كيفو يكونلك إيه؟</label>
+      <select id="onRole" class="sel">
+        <option value="family">🤍 كل العيلة (صاحب + أب + أم + أخت/أخ + جد/جدة)</option>
+        <option value="mom">💐 أم حنونة</option>
+        <option value="dad">🛡️ أب سند وضهر</option>
+        <option value="sibling">🫂 أخ / أخت وصاحب قريب</option>
+        <option value="grandparent">☕ جد / جدة</option>
+      </select>
+      <label class="lbl">إيه أكتر حاجة بتحبها أو بتشغل بالك؟</label>
+      <input id="likesInput" type="text" class="inp" placeholder="مثال: القهوة، المذاكرة، مشروع"/>
+      <div id="onError" class="err"></div>
+      <button type="button" class="btn bp" onclick="finishOnboard()">يلا نبدأ ✨</button>
+    </div></div>
+  </div><div id="screenChat" class="screen">
+    <div class="hdr">
+      <div class="hinfo"><div class="av">K<span class="dot"></span></div><div style="min-width:0;"><div class="htit">كيفو • Kivo</div><div class="hslog" id="langBadge">عيلتك كلها 🤍</div></div></div>
+      <button type="button" class="ibtn" onclick="openMod('modalFamily')">🤍</button>
+      <button type="button" class="ibtn" onclick="openCall()">📞</button>
+      <button type="button" class="ibtn" onclick="openMod('modalLang')">🌍</button>
+      <button type="button" class="ibtn" onclick="openSettings()">⚙️</button>
+      <button type="button" class="ibtn" onclick="toggleDarkMode()" id="darkBtn">🌙</button>
+    </div>
+    <div id="chatBody" class="cbody"></div>
+    <div id="typ" class="typ">كيفو بيكتبلك باهتمام...</div>
+    <div class="chips">
+      <button type="button" class="chip" onclick="triggerCare()">🤍 طمني عليا</button>
+      <button type="button" class="chip" onclick="openMod('modalTutor')">🎓 مدرس خصوصي</button>
+      <button type="button" class="chip" onclick="sendQuick('انا زعلان ومحتاج حد يطبطب عليا')">😔 مضايق</button>
+      <button type="button" class="chip" onclick="openMod('modalDoc')">📊 اعمل ملف</button>
+    </div>
+    <div id="pstrip" class="pstrip"></div>
+    <div class="btm">
+      <div class="irow">
+        <button type="button" id="micBtn" class="mbtn" onclick="toggleMic()">🎤</button>
+        <input id="chatInput" type="text" class="cinp" placeholder="احكيلي أو ابعت صور/فيديو/ملف..." onkeypress="if(event.key==='Enter')sendMsg()"/>
+        <button type="button" class="sbtn" onclick="sendMsg()">➤</button>
+      </div>
+      <div class="dock">
+        <button type="button" class="dbtn v" onclick="openVaultPin()">🔒 ذاكرتي</button>
+        <button type="button" class="dbtn" onclick="openMod('modalMedia')">📎 صور/فيديو/ملف</button>
+        <button type="button" class="dbtn" onclick="openMod('modalDoc')">📄 اعمل ملف</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="callScreen" class="call">
+    <div style="width:100%;">
+      <div style="font-size:13px;opacity:.8;margin-bottom:8px;">مكالمة صوتية مع Kivo</div>
+      <select id="callLang" class="sel" style="background:rgba(255,255,255,.15);color:#fff;text-align:center;">
+        <option value="ar-EG" style="color:#000;">🇪🇬 عربي مصري</option>
+        <option value="zh-CN" style="color:#000;">🇨🇳 صيني (中文)</option>
+        <option value="en-US" style="color:#000;">🇺🇸 إنجليزي</option>
+      </select>
+    </div>
+    <div><div id="cRing" class="cring">K</div><h2>كيفو • Kivo</h2><p id="cStat" style="font-size:13.5px;color:#CBBCE6;margin-top:4px;">اضغطي على 🎤 واتكلمي</p></div>
+    <div id="cTrans" class="ctrans">أهلاً بيك في المكالمة! دوس على المايك واتكلم بأي لغة.</div>
+    <div class="cctrls">
+      <button type="button" id="cTalk" class="ccbtn" style="background:var(--p);color:#fff;width:70px;height:70px;" onclick="toggleCallMic()">🎤</button>
+      <button type="button" class="ccbtn" style="background:var(--err);color:#fff;" onclick="endCall()">📞</button>
+    </div>
+  </div>
+
+  <div id="modalFamily" class="mod"><div class="msheet">
+    <div class="mhead"><h3>🤍 دور كيفو معاك</h3><button type="button" class="ibtn" onclick="closeMods()">✕</button></div>
+    <button type="button" class="btn bo" onclick="setRole('family')">🤍 كل العيلة مع بعض</button>
+    <button type="button" class="btn bo" onclick="setRole('mom')">💐 أم حنونة</button>
+    <button type="button" class="btn bo" onclick="setRole('dad')">🛡️ أب سند وضهر</button>
+    <button type="button" class="btn bo" onclick="setRole('sibling')">🫂 أخ / أخت وصاحب قريب</button>
+    <button type="button" class="btn bo" onclick="setRole('grandparent')">☕ جد / جدة</button>
+  </div></div>
+
+  <div id="modalTutor" class="mod"><div class="msheet">
+    <div class="mhead"><h3>🎓 المدرس الذكي (اشرحلي)</h3><button type="button" class="ibtn" onclick="closeMods()">✕</button></div>
+    <select id="tType" class="sel"><option value="شرح درس">📚 شرح درس / مادة</option><option value="حل واجب">✏️ حل واجب ومسألة خطوة بخطوة</option><option value="اقتصاد ومشروع">💼 اقتصاد ودراسة مشروع</option><option value="تعلم لغة">🌍 لغة (صيني/إنجليزي/غيرها)</option></select>
+    <select id="tLvl" class="sel"><option value="ببساطة من الصفر">ببساطة شديدة من الصفر</option><option value="للامتحان">شرح منظم للامتحانات</option></select>
+    <input id="tTop" type="text" class="inp" placeholder="اكتب اسم الدرس أو السؤال أو المشروع..."/>
+    <div id="tErr" class="err"></div>
+    <button type="button" class="btn bp" onclick="startTutor()">اشرحلي يا كيفو 🎓</button>
+  </div></div>
+
+  <div id="modalLang" class="mod"><div class="msheet">
+    <div class="mhead"><h3>🌍 لغة المحادثة</h3><button type="button" class="ibtn" onclick="closeMods()">✕</button></div>
+    <button type="button" class="btn bo" onclick="setLang('auto')">🌍 تلقائي (يرد بنفس لغتك)</button>
+    <button type="button" class="btn bo" onclick="setLang('ar-EG')">🇪🇬 عربي مصري</button>
+    <button type="button" class="btn bo" onclick="setLang('zh-CN')">🇨🇳 صيني (中文)</button>
+    <button type="button" class="btn bo" onclick="setLang('en-US')">🇺🇸 إنجليزي</button>
+    <div style="display:flex;gap:6px;margin-top:10px;"><input id="cLang" type="text" class="inp" style="margin:0;" placeholder="أي لغة تانية..."/><button type="button" class="btn bp" style="width:auto;padding:0 14px;" onclick="setLang(document.getElementById('cLang').value.trim()||'auto')">تفعيل</button></div>
+  </div></div>
+
+  <div id="modalMedia" class="mod"><div class="msheet">
+    <div class="mhead"><h3>📎 صور / فيديو / ملفات</h3><button type="button" class="ibtn" onclick="closeMods()">✕</button></div>
+    <input type="file" id="mPick" accept="image/*,video/*,.pdf,.txt,.csv" multiple style="display:none;" onchange="handleFiles(event)"/>
+    <button type="button" class="btn bp" onclick="document.getElementById('mPick').click()">📁 اختاري صور أو فيديو أو PDF</button>
+    <div class="div">أو جربي مثال جاهز</div>
+    <button type="button" class="btn bo" onclick="simPhoto('math')">📚 مسألة رياضيات</button>
+    <button type="button" class="btn bo" onclick="simPhoto('cmp')">👗 مقارنة صورتين لبس</button>
+  </div></div>
+
+  <div id="modalDoc" class="mod"><div class="msheet">
+    <div class="mhead"><h3>📄 اعمل ملف حقيقي</h3><button type="button" class="ibtn" onclick="closeMods()">✕</button></div>
+    <select id="dType" class="sel"><option value="pptx">📊 PowerPoint (.pptx)</option><option value="word">📝 Word (.doc)</option><option value="excel">📈 Excel (.xls)</option><option value="pdf">📕 PDF (طباعة وحفظ)</option></select>
+    <select id="dLang" class="sel"><option value="العربية">🇪🇬 العربية</option><option value="الصينية">🇨🇳 الصينية (中文)</option><option value="الإنجليزية">🇺🇸 الإنجليزية</option></select>
+    <input id="dTop" type="text" class="inp" placeholder="موضوع الملف (مثال: خطة مشروع)"/>
+    <div id="dErr" class="err"></div>
+    <button type="button" id="dBtn" class="btn bp" onclick="makeDoc()">إنشاء وتحميل ✨</button>
+  </div></div>
+
+  <div id="modalPin" class="mod"><div class="msheet">
+    <div class="mhead"><h3 id="pTit">🔒 ذاكرتي</h3><button type="button" class="ibtn" onclick="closeMods()">✕</button></div>
+    <p id="pSub" style="text-align:center;font-size:13px;color:var(--m);"></p>
+    <div class="pdots" id="pDots"><span class="pdot"></span><span class="pdot"></span><span class="pdot"></span><span class="pdot"></span></div>
+    <div id="pErr" class="err"></div>
+    <div class="kpad">
+      <button type="button" class="kbtn" onclick="pin('1')">1</button><button type="button" class="kbtn" onclick="pin('2')">2</button><button type="button" class="kbtn" onclick="pin('3')">3</button>
+      <button type="button" class="kbtn" onclick="pin('4')">4</button><button type="button" class="kbtn" onclick="pin('5')">5</button><button type="button" class="kbtn" onclick="pin('6')">6</button>
+      <button type="button" class="kbtn" onclick="pin('7')">7</button><button type="button" class="kbtn" onclick="pin('8')">8</button><button type="button" class="kbtn" onclick="pin('9')">9</button>
+      <button type="button" class="kbtn" style="font-size:12px;" onclick="pinClr()">مسح</button><button type="button" class="kbtn" onclick="pin('0')">0</button><button type="button" class="kbtn" style="font-size:12px;" onclick="pinRst()">نسيت؟</button>
+    </div>
+  </div></div>
+
+  <div id="modalVault" class="mod"><div class="msheet">
+    <div class="mhead"><h3>✨ ذاكرتي المحمية</h3><button type="button" class="ibtn" onclick="closeMods()">✕</button></div>
+    <div class="vcard"><strong style="color:var(--p);">👤 بطاقتك:</strong><p id="vProf" style="margin-top:4px;"></p></div>
+    <div class="vcard"><strong style="color:var(--p);">💭 ذكرياتك:</strong><div id="vMem" style="margin-top:4px;"></div></div>
+    <div class="vcard"><strong style="color:var(--p);">🌤️ مزاجك:</strong> <span id="vMood"></span></div>
+    <button type="button" class="btn bo" style="color:var(--err);border-color:var(--err);" onclick="resetAll()">مسح التجربة والبدء من الأول</button>
+  </div></div>
+
+  <div id="modalSet" class="mod"><div class="msheet">
+    <div class="mhead"><h3>⚙️ مفتاح الذكاء الحقيقي</h3><button type="button" class="ibtn" onclick="closeMods()">✕</button></div>
+    <p id="aiSt" style="font-size:12.5px;font-weight:700;margin-bottom:8px;"></p>
+    <p style="font-size:12.5px;color:var(--m);line-height:1.6;margin-bottom:10px;">اعملي مفتاح مجاني من <strong>aistudio.google.com</strong> (Create API Key) وحطيه هنا لتشغيل الشرح الحقيقي والصور والفيديو واللغات:</p>
+    <input id="apiInp" type="password" class="inp" placeholder="AIzaSy..." dir="ltr" style="text-align:right;"/>
+    <div id="setMsg" class="err" style="color:var(--ok);"></div>
+    <button type="button" class="btn bp" onclick="saveKey()">حفظ وتفعيل ✨</button>
+    <button type="button" class="btn bo" onclick="clrKey()">الوضع التجريبي</button>
+  </div></div>
+</div>
+<iframe id="pf" style="display:none;"></iframe><script>
+const def={email:'',name:'',gender:'female',familyRole:'family',likes:'',pin:'',apiKey:'',lang:'auto',dark:false,lastMood:'طبيعي',lastSeen:0,memories:[],messages:[]};
+function loadS(){try{const r=localStorage.getItem('kivo_v5');return r?JSON.parse(r):JSON.parse(JSON.stringify(def))}catch(e){return JSON.parse(JSON.stringify(def))}}
+function saveS(){try{localStorage.setItem('kivo_v5',JSON.stringify(S))}catch(e){}}
+let S=loadS(),sGen=S.gender||'female',ePin='',atts=[],rec=null,recOn=false,callOn=false,callMic=false,pStep=0,idleT=null;
+const isF=()=>S.gender==='female',g=(f,m)=>isF()?f:m;
+
+function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function openMod(id){document.getElementById(id).classList.add('open')}
+function closeMods(){document.querySelectorAll('.mod').forEach(x=>x.classList.remove('open'))}
+function toggleDarkMode(){S.dark=!S.dark;document.body.classList.toggle('dark',S.dark);const b=document.getElementById('darkBtn');if(b)b.textContent=S.dark?'☀️':'🌙';saveS()}
+
+function loginWithEmail(){
+  const em=document.getElementById('emailInput').value.trim(),er=document.getElementById('loginError');
+  if(!em||!em.includes('@')){er.textContent='اكتبي إيميل صحيح الأول ✨';return}
+  er.textContent='';S.email=em;saveS();show(S.name?'screenChat':'screenOnboard');
+}
+function loginWithGoogle(){document.getElementById('loginError').textContent='';S.email='user@gmail.com';saveS();show(S.name?'screenChat':'screenOnboard')}
+function selGen(x){sGen=x;document.getElementById('btnF').classList.toggle('sel',x==='female');document.getElementById('btnM').classList.toggle('sel',x==='male')}
+
+function finishOnboard(){
+  const nm=document.getElementById('nameInput').value.trim(),lk=document.getElementById('likesInput').value.trim(),er=document.getElementById('onError');
+  if(!nm){er.textContent='قولي أناديك بإيه الأول 😊';return}
+  er.textContent='';S.name=nm;S.gender=sGen;S.familyRole=document.getElementById('onRole').value;S.likes=lk||'الروقان والونس';S.lastSeen=Date.now();
+  if(lk)S.memories.push(lk);
+  S.messages.push({sender:'bot',text:`أهلاً بيك${g('ي','')} يا ${S.name} 🤍\nأنا فاكرك وموجود عشانك دايماً — صاحبك وعيلتك كلها.\nنمت${g('ي','')} كويس وأكلت${g('ي','')} النهاردة؟ احكيلي يومك، ولو عايز${g('ة','')} أشرحلك أي درس أو مشروع أنا جاهز!`,time:gt()});
+  saveS();updHdr();show('screenChat');render();schedIdle();
+}
+
+function gt(){try{return new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})}catch(e){return''}}
+
+function render(){
+  const b=document.getElementById('chatBody');b.innerHTML='';
+  S.messages.forEach(m=>{
+    const d=document.createElement('div');d.className='msg '+m.sender;
+    if(m.atts&&m.atts.length){
+      const med=m.atts.filter(a=>a.kind==='image'||a.kind==='video');
+      if(med.length){const gr=document.createElement('div');gr.className='mgrid';med.forEach(a=>{const el=document.createElement(a.kind==='image'?'img':'video');el.src=a.dataUrl;if(a.kind==='video')el.controls=true;gr.appendChild(el)});d.appendChild(gr)}
+      m.atts.filter(a=>a.kind!=='image'&&a.kind!=='video').forEach(f=>{const fd=document.createElement('div');fd.className='fbad';fd.textContent='📄 '+f.name;d.appendChild(fd)});
+    }
+    if(m.text){const sp=document.createElement('span');sp.textContent=m.text;d.appendChild(sp)}
+    const ft=document.createElement('div');ft.className='mft';ft.innerHTML=`<span>${m.time||''}</span>`;
+    if(m.sender==='bot'&&m.text){const sb=document.createElement('button');sb.type='button';sb.className='spk';sb.textContent='🔊 اسمع';sb.onclick=()=>speak(m.text);ft.appendChild(sb)}
+    d.appendChild(ft);b.appendChild(d);
+  });
+  b.scrollTop=b.scrollHeight;
+}
+
+function setRole(r){
+  S.familyRole=r;saveS();updHdr();closeMods();
+  const mp={family:'معاكي بكل روح العيلة 🤍',mom:`أنا جنبك زي أمك يا ${S.name} 💐.. أكلتي ونمتي كويس؟`,dad:`أنا في ضهرك يا ${S.name} 🛡️.. متخافيش من حاجة!`,sibling:`أخوك${g('','')} وصاحبك جاهز للفضفضة 🫂!`,grandparent:`تعالي يا ${S.name} في دفا جدك وجدتك ☕🤍`};
+  S.messages.push({sender:'bot',text:mp[r],time:gt()});saveS();render();
+}
+function setLang(l){S.lang=l;saveS();updHdr();closeMods()}
+function updHdr(){const rm={family:'عيلتك كلها 🤍',mom:'روح الأم 💐',dad:'سند الأب 🛡️',sibling:'أخ وصديق 🫂',grandparent:'دفا الجد والجدة ☕'};document.getElementById('langBadge').textContent=`أنا فاكرك • ${rm[S.familyRole]||'عيلتك كلها'}${S.lang!=='auto'?' • '+S.lang:''}`}
+
+function startTutor(){
+  const tp=document.getElementById('tTop').value.trim(),er=document.getElementById('tErr');
+  if(!tp){er.textContent='اكتب الدرس أو السؤال الأول 📚';return}
+  er.textContent='';document.getElementById('tTop').value='';closeMods();
+  sendQuick(`🎓 [${document.getElementById('tType').value} - ${document.getElementById('tLvl').value}]:\nاشرحلي: ${tp}`);
+}
+
+function compImg(f){
+  return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>{const i=new Image();i.onload=()=>{const m=900;let w=i.width,h=i.height;if(w>m||h>m){if(w>h){h=Math.round(h*m/w);w=m}else{w=Math.round(w*m/h);h=m}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);const d=c.toDataURL('image/jpeg',.8);res({kind:'image',name:f.name,dataUrl:d,mime:'image/jpeg',base64:d.split(',')[1]})};i.onerror=rej;i.src=e.target.result};r.onerror=rej;r.readAsDataURL(f)});
+}
+const rB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res({dataUrl:e.target.result,base64:e.target.result.split(',')[1]});r.onerror=rej;r.readAsDataURL(f)});
+const rTxt=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsText(f)});
+
+async function handleFiles(ev){
+  const fs=Array.from(ev.target.files||[]);ev.target.value='';if(!fs.length)return;closeMods();
+  for(const f of fs){try{
+    if(f.type.startsWith('image/'))atts.push(await compImg(f));
+    else if(f.type.startsWith('video/')&&f.size<=12*1024*1024){const b=await rB64(f);atts.push({kind:'video',name:f.name,dataUrl:b.dataUrl,mime:f.type||'video/mp4',base64:b.base64})}
+    else if(f.name.toLowerCase().endsWith('.pdf')&&f.size<=10*1024*1024){const b=await rB64(f);atts.push({kind:'pdf',name:f.name,mime:'application/pdf',base64:b.base64})}
+    else if(f.name.match(/\.(txt|csv)$/i))atts.push({kind:'text',name:f.name,textContent:(await rTxt(f)).slice(0,12000)});
+    else atts.push({kind:'other',name:f.name});
+  }catch(e){}}
+  renderStrip();
+}
+
+function renderStrip(){
+  const p=document.getElementById('pstrip');p.innerHTML='';
+  if(!atts.length){p.classList.remove('show');return}
+  p.classList.add('show');
+  atts.forEach((a,i)=>{
+    const w=document.createElement('div');w.className='pthumb';
+    if(a.kind==='image'||a.kind==='video'){const el=document.createElement(a.kind==='image'?'img':'video');el.src=a.dataUrl;w.appendChild(el)}
+    else w.textContent='📄 '+a.name.slice(0,8);
+    const rm=document.createElement('button');rm.type='button';rm.className='rmt';rm.textContent='✕';rm.onclick=()=>{atts.splice(i,1);renderStrip()};
+    w.appendChild(rm);p.appendChild(w);
+  });
+}
+
+function sendQuick(t){document.getElementById('chatInput').value=t;sendMsg()}
+
+async function sendMsg(){
+  const inp=document.getElementById('chatInput'),txt=inp.value.trim(),cur=[...atts];
+  if(!txt&&!cur.length)return null;
+  if(idleT)clearTimeout(idleT);
+  inp.value='';atts=[];renderStrip();S.lastSeen=Date.now();
+  S.messages.push({sender:'user',text:txt,atts:cur.map(a=>({kind:a.kind,name:a.name,dataUrl:a.dataUrl})),time:gt()});
+  saveS();render();
+  const tp=document.getElementById('typ');tp.style.display='block';
+  let rep='';
+  if(S.apiKey)rep=await askGemini(txt,cur);
+  else{await new Promise(r=>setTimeout(r,500));rep=localRep(txt,cur)}
+  tp.style.display='none';S.lastSeen=Date.now();S.messages.push({sender:'bot',text:rep,time:gt()});saveS();render();return rep;
+}function sysPrompt(){
+  const roles={family:'أنت كل العيلة (حنان الأم + سند الأب + صحوبية الأخ/الأخت + حكمة الجد والجدة). حسسه إنك مهتم بأكله ونومه ونفسيته دايماً.',mom:'روح الأم الحنونة الخايفة على ابنها/بنتها.',dad:'روح الأب السند والضهر.',sibling:'روح الأخ/الأخت القريبة.',grandparent:'روح الجد/الجدة بدفا وحكمة.'};
+  const l=S.lang==='auto'?'رد بنفس لغة المستخدم (مصري، صيني مع البينيين، إنجليزي، أو أي لغة).':`تكلم بلغة (${S.lang}).`;
+  return `أنت "كيفو" (Kivo). أهم حاجة هي الاهتمام الحقيقي: ${roles[S.familyRole]} المستخدم: ${S.name} (${isF()?'بنت':'ولد'})، يحب: ${S.likes}. ${l} وكمان أنت أشطر مدرس خصوصي واقتصادي: اشرح الدروس والواجبات والمسائل خطوة بخطوة وببساطة، وحلل المشاريع بأمانة، وافهم الصور والفيديو والملفات لوحدك.`;
+}
+
+async function askGemini(txt,cur){
+  try{
+    const parts=[];
+    let p=txt||'افهم الصور/الفيديو/الملفات دي ورد أو اشرحها فوراً.';
+    cur.forEach(a=>{if((a.kind==='image'||a.kind==='video'||a.kind==='pdf')&&a.base64)parts.push({inlineData:{mimeType:a.mime,data:a.base64}});else if(a.kind==='text')p+='\n'+a.textContent});
+    parts.unshift({text:p});
+    const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-4-hydrogen:generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':S.apiKey},body:JSON.stringify({systemInstruction:{parts:[{text:sysPrompt()}]},contents:[{role:'user',parts}]})});
+    const d=await res.json();
+    if(!res.ok)return`مشكلة في المفتاح (${d.error?.message||res.status}) في ⚙️.`;
+    return(d.candidates?.[0]?.content?.parts||[]).map(x=>x.text||'').join('').trim()||'جرب تاني!';
+  }catch(e){return'تأكدي من النت أو افتحي في Chrome.'}
+}
+
+function localRep(txt,cur){
+  if(cur.length)return`استلمت المرفقات (${cur.length})! حط مفتاح جوجل المجاني في ⚙️ فوق عشان أشوف الصور والفيديو والملفات وأشرحهم لوحدي.`;
+  if(txt.includes('اقتصاد')||txt.includes('مشروع'))return`في الاقتصاد والمشاريع يا ${S.name} 💼:\n1️⃣ احسب التكلفة الثابتة والمتغيرة.\n2️⃣ اعرف نقطة التعادل.\n*(حط مفتاح جوجل في ⚙️ عشان أحللك مشروعك بأرقامه الحقيقية!)*`;
+  if(txt.includes('اشرح')||txt.includes('درس')||txt.includes('واجب')||txt.includes('مسألة'))return`حاضر يا ${S.name}، أنا مدرسك الخصوصي 🎓 بشرح خطوة بخطوة! *(حط مفتاح جوجل المجاني في ⚙️ عشان أشرحلك أي مادة في الدنيا!)*`;
+  if(txt.includes('صيني')||S.lang==='zh-CN')return`"别担心，我一直都在" (Bié dānxīn, wǒ yīzhí dōu zài)\nمعناها: متقلقش، أنا موجود جنبك دايماً! 🇨🇳🤍`;
+  if(txt.includes('زعلان')||txt.includes('يطبطب')){S.lastMood='زعلان';return`سلامة قلبك يا ${S.name} 🤍 تعالي احكيلي مالك؟ أنا جنبك ومش هسيبك لوحدك أبداً.`}
+  if(txt.includes('احفظ')||txt.includes('بحب')){S.memories.push(txt);return`حفظتها في ذاكرتي خلاص يا ${S.name} ✅`}
+  return`أنا سامعك يا ${S.name} وموجود عشانك 🤍 أكلت${g('ي','')} ونمت${g('ي','')} كويس النهاردة؟`;
+}
+
+function triggerCare(){
+  const msgs=S.lastMood==='زعلان'?[`يا ${S.name} قلبي عندك من آخر مرة 🤍 بقيت${g('ي','')} أحسن؟ أنا موجود.`]:[`طمن${g('يني','ي')} عليك يا ${S.name} 🤍.. أكلت${g('ي','')} ونمت${g('ي','')} كويس؟ أنا في ضهرك دايماً.`,`يا ${S.name} أنا فاكرك وجيت أطل عليك ☀️ لو شايل${g('ة','')} هم احكيلي فوراً.`];
+  const m=msgs[pStep++%msgs.length];
+  document.getElementById('pushTxt').textContent=m;document.getElementById('pushBanner').classList.add('show');setTimeout(hidePush,5500);
+  S.messages.push({sender:'bot',text:m,time:gt()});S.lastSeen=Date.now();saveS();render();
+}
+function hidePush(){document.getElementById('pushBanner').classList.remove('show')}
+function schedIdle(){if(idleT)clearTimeout(idleT);idleT=setTimeout(()=>{if(document.getElementById('screenChat').classList.contains('active')&&!callOn)triggerCare()},35000)}
+
+function speak(t,cb){if(!('speechSynthesis'in window)){if(cb)cb();return}try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=/[\u4e00-\u9fff]/.test(t)?'zh-CN':(S.lang!=='auto'?S.lang:'ar-EG');u.onend=u.onerror=()=>{if(cb)cb()};window.speechSynthesis.speak(u)}catch(e){if(cb)cb()}}
+const gSR=()=>{const X=window.SpeechRecognition||window.webkitSpeechRecognition;return X?new X():null};
+function toggleMic(){
+  const b=document.getElementById('micBtn');if(recOn&&rec){rec.stop();recOn=false;b.classList.remove('rec');return}
+  rec=gSR();if(!rec){S.messages.push({sender:'bot',text:'افتحي في Chrome عشان المايك يشتغل 🎤',time:gt()});render();return}
+  rec.lang=S.lang==='auto'?'ar-EG':S.lang;recOn=true;b.classList.add('rec');
+  rec.onresult=e=>{document.getElementById('chatInput').value=e.results[0][0].transcript;sendMsg()};
+  rec.onerror=rec.onend=()=>{recOn=false;b.classList.remove('rec')};try{rec.start()}catch(e){}
+}
+function openCall(){callOn=true;document.getElementById('callScreen').classList.add('active')}
+function toggleCallMic(){
+  const b=document.getElementById('cTalk'),st=document.getElementById('cStat'),rg=document.getElementById('cRing');
+  if(callMic&&rec){try{rec.stop()}catch(e){}callMic=false;b.classList.remove('rec');return}
+  rec=gSR();if(!rec){st.textContent='افتحي في Chrome للمايك';return}
+  rec.lang=document.getElementById('callLang').value;callMic=true;b.classList.add('rec');st.textContent='🎧 سامعك... اتكلمي';
+  rec.onresult=async e=>{const sp=e.results[0][0].transcript;callMic=false;b.classList.remove('rec');document.getElementById('cTrans').textContent='أنتي: '+sp;document.getElementById('chatInput').value=sp;const rep=await sendMsg();if(!callOn)return;document.getElementById('cTrans').textContent='كيفو: '+rep;rg.classList.add('talk');speak(rep,()=>{rg.classList.remove('talk');if(callOn)st.textContent='اضغطي 🎤 للرد'})};
+  rec.onerror=()=>{callMic=false;b.classList.remove('rec');st.textContent='حاولي تاني 🎤'};try{rec.start()}catch(e){}
+}
+function endCall(){callOn=false;callMic=false;try{if(rec)rec.stop()}catch(e){}try{window.speechSynthesis.cancel()}catch(e){}document.getElementById('callScreen').classList.remove('active')}
+
+function loadPptx(){return new Promise(r=>{if(typeof PptxGenJS!=='undefined')return r(true);const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js';const t=setTimeout(()=>r(false),5000);s.onload=()=>{clearTimeout(t);r(typeof PptxGenJS!=='undefined')};s.onerror=()=>{clearTimeout(t);r(false)};document.head.appendChild(s)})}
+function dl(b,n){const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(u)},1000)}
+async function makeDoc(){
+  const tp=document.getElementById('dType').value,lg=document.getElementById('dLang').value,top=document.getElementById('dTop').value.trim(),er=document.getElementById('dErr');
+  if(!top){er.textContent='اكتبي الموضوع ✨';return}
+  er.textContent='';const d={title:top,headers:['البند','التفاصيل','النسبة'],rows:[['التخطيط',top,'30%'],['التنفيذ','الخطوات','70%']],sections:[{heading:'1. المقدمة',bullets:[`أهمية ${top}`,'الأهداف']},{heading:'2. الخطة',bullets:['الخطوات العملية','الخلاصة']}]};
+  if(tp==='pptx'&&await loadPptx()){try{const p=new PptxGenJS();p.rtlMode=lg==='العربية';const c=p.addSlide();c.background={color:'FAF6F0'};c.addText(d.title,{x:.8,y:2,w:8.4,h:1,fontSize:28,bold:true,color:'8E7AB5',align:'center'});d.sections.forEach(s=>{const sl=p.addSlide();sl.background={color:'FAF6F0'};sl.addText(s.heading,{x:.6,y:.5,w:8.8,h:.8,fontSize:22,color:'8E7AB5'});sl.addText(s.bullets.join('\n'),{x:.7,y:1.5,w:8.6,h:3.5,fontSize:16})});p.writeFile({fileName:'Kivo.pptx'});closeMods();return}catch(e){}}
+  if(tp==='excel'){let t='<table border=1><tr>'+d.headers.map(h=>`<th>${h}</th>`).join('')+'</tr>'+d.rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('')+'</table>';dl(new Blob(['\ufeff',`<html dir=rtl><meta charset=utf-8><body>${t}</body></html>`],{type:'application/vnd.ms-excel'}),'Kivo.xls')}
+  else if(tp==='pdf'){const h=`<html dir=rtl><meta charset=utf-8><body style="font-family:Tahoma;padding:24px;"><h1>${d.title}</h1>`+d.sections.map(s=>`<h2>${s.heading}</h2><ul>`+s.bullets.map(b=>`<li>${b}</li>`).join('')+'</ul>').join('')+'</body></html>';const f=document.getElementById('pf').contentWindow.document;f.open();f.write(h);f.close();setTimeout(()=>{try{document.getElementById('pf').contentWindow.print()}catch(e){dl(new Blob(['\ufeff',h],{type:'text/html'}),'Kivo-PDF.html')}},250)}
+  else{dl(new Blob(['\ufeff',`<html dir=rtl><meta charset=utf-8><body><h1>${d.title}</h1>`+d.sections.map(s=>`<h2>${s.heading}</h2><ul>`+s.bullets.map(b=>`<li>${b}</li>`).join('')+'</ul>').join('')+'</body></html>'],{type:'application/msword'}),'Kivo.doc')}
+  closeMods();S.messages.push({sender:'bot',text:`جهزتلك ملف ${tp} عن "${top}" وحملتهولك يا ${S.name} 🎉!`,time:gt()});saveS();render();
+}
+
+function openVaultPin(){ePin='';updDots();document.getElementById('pErr').textContent='';document.getElementById('pTit').textContent=S.pin?'🔒 خزنة ذاكرتي':'🔒 اعملي باسورد';document.getElementById('pSub').textContent=S.pin?'اكتبي 4 أرقام':'اختاري 4 أرقام';openMod('modalPin')}
+function pin(n){if(ePin.length>=4)return;ePin+=n;updDots();if(ePin.length===4)setTimeout(()=>{if(!S.pin){S.pin=ePin;saveS();closeMods();openVault()}else if(ePin===S.pin){closeMods();openVault()}else{document.getElementById('pErr').textContent='غلط!';ePin='';updDots()}},150)}
+function pinClr(){ePin='';updDots();document.getElementById('pErr').textContent=''}
+function pinRst(){S.pin='';ePin='';updDots();saveS();document.getElementById('pErr').textContent='اكتبي 4 أرقام جديدة'}
+function updDots(){document.querySelectorAll('#pDots .pdot').forEach((d,i)=>d.classList.toggle('f',i<ePin.length))}
+function openVault(){document.getElementById('vProf').textContent=`${S.name} | ${S.email} | ${S.likes}`;document.getElementById('vMood').textContent=S.lastMood;const v=document.getElementById('vMem');v.innerHTML=S.memories.length?S.memories.map(m=>`<div>• ${m}</div>`).join(''):'لسه مفيش ذكريات';openMod('modalVault')}
+
+function simPhoto(t){closeMods();S.messages.push({sender:'user',text:t==='math'?'📷 2س+6=14':'📷📷 طقمين لبس'},time:gt()});render();setTimeout(()=>{S.messages.push({sender:'bot',text:t==='math'?'2س=14-6=8 ⬅️ س=4 😊':'البيج والموف أروق بكتير للصبح ✨',time:gt()});saveS();render()},450)}
+function openSettings(){document.getElementById('aiSt').textContent=S.apiKey?'الحالة: متصل ✅':'الحالة: تجريبي ⚡';document.getElementById('apiInp').value=S.apiKey||'';openMod('modalSet')}
+function saveKey(){const k=document.getElementById('apiInp').value.trim();if(!k)return;S.apiKey=k;saveS();document.getElementById('setMsg').textContent='تم التفعيل 🎉';setTimeout(openSettings,400)}
+function clrKey(){S.apiKey='';saveS();openSettings()}
+function resetAll(){try{localStorage.removeItem('kivo_v5')}catch(e){}S=JSON.parse(JSON.stringify(def));closeMods();show('screenLogin')}
+
+(function init(){
+  document.getElementById('jsCheck').style.display='none';
+  if(S.dark){document.body.classList.add('dark');const b=document.getElementById('darkBtn');if(b)b.textContent='☀️'}
+  updHdr();
+  if(S.email&&S.name){show('screenChat');if(S.lastSeen&&Date.now()-S.lastSeen>60000)triggerCare();else render();schedIdle()}
+  else if(S.email)show('screenOnboard');
+  else show('screenLogin');
+})();
+</script>
+</body>
+</html>
